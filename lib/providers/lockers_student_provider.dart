@@ -3,9 +3,6 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:lockers_app/models/student.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
-import 'package:mime/mime.dart';
 
 import '../infrastructure/db_service.dart';
 import '../models/locker.dart';
@@ -145,41 +142,11 @@ class LockerStudentProvider with ChangeNotifier {
     );
   }
 
-  
   Future<void> importStudentsWithCSV(FilePickerResult? result) async {
     if (result != null) {
       final file = result.files.first;
-      final filePath = file.path;
-      final mimeType = filePath != null ? lookupMimeType(filePath) : null;
-      final contentType = mimeType != null ? MediaType.parse(mimeType) : null;
-
-      final fileReadStream = file.readStream;
-      if (fileReadStream == null) {
-        throw Exception('Cannot read file from null stream');
-      }
-      final stream = http.ByteStream(fileReadStream);
-
-      final uri = Uri.https('siasky.net', '/skynet/skyfile');
-      final request = http.MultipartRequest('POST', uri);
-      final multipartFile = http.MultipartFile(
-        'file',
-        stream,
-        file.size,
-        filename: file.name,
-        contentType: contentType,
-      );
-      request.files.add(multipartFile);
-
-      final httpClient = http.Client();
-      final response = await httpClient.send(request);
-
-      if (response.statusCode != 200) {
-        throw Exception('HTTP ${response.statusCode}');
-      }
-
-      final body = await response.stream.transform(utf8.decoder).join();
-
-      print(body);
+      final bytes = utf8.decode(file.bytes!);
+      print(bytes);
     } else {
       throw Exception('Fichier non trouvé');
     }

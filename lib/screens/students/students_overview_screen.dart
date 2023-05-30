@@ -133,8 +133,7 @@ class StudentsListView extends StatelessWidget {
                       onPressed: () async {
                         final result = await FilePicker.platform.pickFiles(
                           type: FileType.custom,
-                          allowedExtensions: ['csv'],
-                          withReadStream: true,
+                          allowedExtensions: ['csv']
                         );
                         await Provider.of<LockerStudentProvider>(context,
                                 listen: false)
